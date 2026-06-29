@@ -18,6 +18,7 @@ ARocketJumpTurret::ARocketJumpTurret()
 	HeadMesh->SetupAttachment(BaseMesh);
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> ChamferCube(TEXT("/Game/LevelPrototyping/Meshes/SM_ChamferCube.SM_ChamferCube"));
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> SciFiDevice(TEXT("/Game/Fab/Scifi_Device_-_Cyberpunk_-_Inhaler/scifi_device_cyberpunk_inhaler/StaticMeshes/scifi_device_cyberpunk_inhaler.scifi_device_cyberpunk_inhaler"));
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> FallbackCube(TEXT("/Engine/BasicShapes/Cube.Cube"));
 
 	UStaticMesh* BodyMesh = ChamferCube.Succeeded() ? ChamferCube.Object : (FallbackCube.Succeeded() ? FallbackCube.Object : nullptr);
@@ -25,6 +26,10 @@ ARocketJumpTurret::ARocketJumpTurret()
 	{
 		BaseMesh->SetStaticMesh(BodyMesh);
 		HeadMesh->SetStaticMesh(BodyMesh);
+	}
+	if (SciFiDevice.Succeeded())
+	{
+		HeadMesh->SetStaticMesh(SciFiDevice.Object);
 	}
 
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> BaseMat(TEXT("/Game/LevelPrototyping/Materials/MI_PrototypeGrid_Gray.MI_PrototypeGrid_Gray"));
@@ -34,14 +39,14 @@ ARocketJumpTurret::ARocketJumpTurret()
 	}
 
 	static ConstructorHelpers::FObjectFinder<UMaterialInterface> HeadMat(TEXT("/Game/LevelPrototyping/Materials/MI_PrototypeGrid_TopDark.MI_PrototypeGrid_TopDark"));
-	if (HeadMat.Succeeded())
+	if (!SciFiDevice.Succeeded() && HeadMat.Succeeded())
 	{
 		HeadMesh->SetMaterial(0, HeadMat.Object);
 	}
 
 	BaseMesh->SetRelativeScale3D(FVector(0.55f, 0.55f, 0.35f));
-	HeadMesh->SetRelativeLocation(FVector(0.f, 0.f, 45.f));
-	HeadMesh->SetRelativeScale3D(FVector(0.35f, 0.35f, 0.5f));
+	HeadMesh->SetRelativeLocation(FVector(0.f, 0.f, 55.f));
+	HeadMesh->SetRelativeScale3D(SciFiDevice.Succeeded() ? FVector(0.45f) : FVector(0.35f, 0.35f, 0.5f));
 	BaseMesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	HeadMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 

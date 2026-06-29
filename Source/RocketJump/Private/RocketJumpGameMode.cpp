@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "RocketJumpComponent.h"
 #include "RocketJumpHealthComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 #include "UObject/ConstructorHelpers.h"
 
 ARocketJumpGameMode::ARocketJumpGameMode()
@@ -35,6 +37,8 @@ void ARocketJumpGameMode::StartPlay()
 {
 	Super::StartPlay();
 
+	EnsurePlayerRocketJumpSetup();
+
 	if (!bAutoSetupLevel1Turrets)
 	{
 		return;
@@ -52,5 +56,33 @@ void ARocketJumpGameMode::StartPlay()
 	if (ARocketJumpLevelSetup* Setup = GetWorld()->SpawnActor<ARocketJumpLevelSetup>(ARocketJumpLevelSetup::StaticClass(), FVector::ZeroVector, FRotator::ZeroRotator, Params))
 	{
 		Setup->TurretHeightAbovePlatform = TurretHeightAbovePlatform;
+	}
+}
+
+void ARocketJumpGameMode::EnsurePlayerRocketJumpSetup()
+{
+	ACharacter* Character = UGameplayStatics::GetPlayerCharacter(this, 0);
+	if (!Character)
+	{
+		if (UWorld* World = GetWorld())
+		{
+			FTimerHandle RetryHandle;
+			World->GetTimerManager().SetTimer(RetryHandle, this, &ARocketJumpGameMode::EnsurePlayerRocketJumpSetup, 0.1f, false);
+		}
+		return;
+	}
+
+	if (!Character->FindComponentByClass<URocketJumpComponent>())
+	{
+		URocketJumpComponent* RocketJump = NewObject<URocketJumpComponent>(Character, TEXT("RocketJumpComponent"));
+		Character->AddInstanceComponent(RocketJump);
+		RocketJump->RegisterComponent();
+	}
+
+	if (!Character->FindComponentByClass<URocketJumpHealthComponent>())
+	{
+		URocketJumpHealthComponent* Health = NewObject<URocketJumpHealthComponent>(Character, TEXT("RocketJumpHealth"));
+		Character->AddInstanceComponent(Health);
+		Health->RegisterComponent();
 	}
 }

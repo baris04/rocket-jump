@@ -19,4 +19,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "RocketJump|Level")
 	float TurretHeightAbovePlatform = 80.f;
+
+protected:
+	void EnsurePlayerRocketJumpSetup();
 };

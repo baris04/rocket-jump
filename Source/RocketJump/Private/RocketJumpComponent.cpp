@@ -3,6 +3,7 @@
 #include "RocketJumpHealthComponent.h"
 
 #include "Camera/CameraComponent.h"
+#include "Engine/SkeletalMesh.h"
 #include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "EnhancedInputComponent.h"
@@ -23,6 +24,15 @@ URocketJumpComponent::URocketJumpComponent()
 	if (ProjectileFinder.Succeeded())
 	{
 		ProjectileClass = ProjectileFinder.Class;
+	}
+
+	static ConstructorHelpers::FObjectFinder<USkeletalMesh> FabGun(TEXT("/Game/Fab/Sci-Fi_Gun___Rigged/scifi_gun/SkeletalMeshes/scifi_gun.scifi_gun"));
+	if (FabGun.Succeeded())
+	{
+		GunSkeletalMeshAsset = FabGun.Object;
+		GunRelativeScale = FVector(0.18f, 0.18f, 0.18f);
+		GunCameraFallbackOffset = FVector(38.f, 17.f, -18.f);
+		GunCameraFallbackRotation = FRotator(0.f, -90.f, 0.f);
 	}
 
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> DefaultGun(TEXT("/Game/Weapons/GrenadeLauncher/Meshes/SM_GrenadeLauncher.SM_GrenadeLauncher"));
@@ -79,13 +89,24 @@ void URocketJumpComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void URocketJumpComponent::AttachGunVisual(ACharacter* Character)
 {
-	if (!Character || !GunMeshAsset)
+	if (!Character || (!GunSkeletalMeshAsset && !GunMeshAsset))
 	{
 		return;
 	}
 
-	GunMeshComponent = NewObject<UStaticMeshComponent>(Character, TEXT("RocketJumpGunMesh"));
-	GunMeshComponent->SetStaticMesh(GunMeshAsset);
+	if (GunSkeletalMeshAsset)
+	{
+		USkeletalMeshComponent* NewGun = NewObject<USkeletalMeshComponent>(Character, TEXT("RocketJumpGunMesh"));
+		NewGun->SetSkeletalMesh(GunSkeletalMeshAsset);
+		GunMeshComponent = NewGun;
+	}
+	else
+	{
+		UStaticMeshComponent* NewGun = NewObject<UStaticMeshComponent>(Character, TEXT("RocketJumpGunMesh"));
+		NewGun->SetStaticMesh(GunMeshAsset);
+		GunMeshComponent = NewGun;
+	}
+
 	GunMeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	GunMeshComponent->SetCastShadow(false);
 	GunMeshComponent->SetRelativeScale3D(GunRelativeScale);

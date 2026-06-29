@@ -11,7 +11,9 @@
 
 class UInputAction;
 class UInputMappingContext;
-class UStaticMeshComponent;
+class UPrimitiveComponent;
+class USkeletalMesh;
+class UStaticMesh;
 
 /**
  * Baktigin yone roket firlatabilir (patlayarak itme) veya anlik trace modu.
@@ -135,6 +137,9 @@ protected:
 	TObjectPtr<UStaticMesh> GunMeshAsset = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RocketJump|Gun")
+	TObjectPtr<USkeletalMesh> GunSkeletalMeshAsset = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RocketJump|Gun")
 	FName GunAttachSocketName = TEXT("hand_r");
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RocketJump|Gun")
@@ -166,7 +171,7 @@ protected:
 	float RecoilRecoverySpeed = 14.f;
 
 	UPROPERTY(Transient)
-	TObjectPtr<UStaticMeshComponent> GunMeshComponent = nullptr;
+	TObjectPtr<UPrimitiveComponent> GunMeshComponent = nullptr;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UInputAction> RocketJumpAction = nullptr;
