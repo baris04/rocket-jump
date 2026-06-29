@@ -2,14 +2,7 @@
 	"FileVersion": 3,
 	"EngineAssociation": "5.7",
 	"Category": "",
-	"Description": "",
-	"Modules": [
-		{
-			"Name": "RocketJump",
-			"Type": "Runtime",
-			"LoadingPhase": "Default"
-		}
-	],
+	"Description": "Blueprint-only Rocket Jump project.",
 	"Plugins": [
 		{
 			"Name": "ModelingToolsEditorMode",
@@ -20,6 +13,14 @@
 		},
 		{
 			"Name": "GameplayStateTree",
+			"Enabled": true
+		},
+		{
+			"Name": "PythonScriptPlugin",
+			"Enabled": true
+		},
+		{
+			"Name": "EditorScriptingUtilities",
 			"Enabled": true
 		}
 	]

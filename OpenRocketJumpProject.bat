@@ -1,7 +1,7 @@
 @echo off
-REM Unreal Editor ile bu projeyi acar (cift tik / dosya iliskisi gerekmez).
+REM Unreal Editor ile Blueprint-only projeyi acar (cift tik / dosya iliskisi gerekmez).
 set "UE_EDITOR=C:\Program Files\Epic Games\UE_5.7\Engine\Binaries\Win64\UnrealEditor.exe"
-set "PROJECT=%~dp0rocket_jump.uproject"
+set "PROJECT=%~dp0rocket_jump_blueprint.uproject"
 
 if not exist "%UE_EDITOR%" (
   echo Bulunamadi: %UE_EDITOR%
